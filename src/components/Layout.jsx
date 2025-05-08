@@ -7,6 +7,13 @@ import sidebaricon2 from "../assets/Images/dashbordimgs/sidebaricon2.png";
 import sidebaricon7 from "../assets/Images/dashbordimgs/sidebaricon7.png";
 import sidebaricon10 from "../assets/Images/dashbordimgs/sidebaricon10.png";
 
+// Milestone 3 
+import sidebaricon3 from "../assets/Images/dashbordimgs/sidebaricon3.png";
+import sidebaricon4 from "../assets/Images/dashbordimgs/sidebaricon4.png";
+import sidebaricon5 from "../assets/Images/dashbordimgs/sidebaricon5.png";
+import sidebaricon6 from "../assets/Images/dashbordimgs/sidebaricon6.png";
+import sidebaricon8 from "../assets/Images/dashbordimgs/sidebaricon8.png";
+import sidebaricon9 from "../assets/Images/dashbordimgs/sidebaricon9.png";
 
 
 import axios from "axios";
@@ -28,7 +35,13 @@ const sidebarItems = [
   { icon: sidebaricon10, label: "Manage Parameters", path: "/manage-parameters" },
 
 
-
+  // Milestone 3 
+  { icon: sidebaricon3, label: "Manage Staff", path: "/manage-staff" },
+  { icon: sidebaricon4, label: "Create Experiment", path: "/create-exp" },
+  { icon: sidebaricon5, label: "Track Experiment", path: "/track-exp" },
+  { icon: sidebaricon9, label: "Experiment History", path: "/exp-history" },
+  { icon: sidebaricon8, label: "ELN Reports", path: "/eln-reports" },
+  { icon: sidebaricon6, label: "Data Visualization", path: "/data-visualization" },
 ];
 
 const Layout = ({ title, children }) => {

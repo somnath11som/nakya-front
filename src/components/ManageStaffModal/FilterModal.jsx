@@ -1,6 +1,6 @@
 import React from "react";
 
-const FilterModal = ({ isOpen, onClose, selectedLocation, selectedDepartment, toggleCheckbox, fromDate, setFromDate, toDate, setToDate, handleFilterApply }) => {
+const FilterModal = ({ isOpen, onClose, selectedLocation, selectedDepartment, toggleCheckbox, fromDate, setFromDate, toDate, setToDate, handleFilterApply, departments }) => {
   if (!isOpen) return null;
 
   return (
@@ -30,13 +30,15 @@ const FilterModal = ({ isOpen, onClose, selectedLocation, selectedDepartment, to
         <div className="mt-4">
           <h3 className="font-semibold">Department</h3>
           <hr className="my-1 border-gray-300" />
-
-          {["R&D", "Quality Control", "Lab"].map((item) => (
-            <label key={item} className="flex items-center gap-2 mt-2">
-              <input type="checkbox" checked={selectedDepartment.includes(item)} onChange={() => toggleCheckbox("department", item)} />
-              {item}
-            </label>
-          ))}
+          <div className="max-h-[100px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+            {departments &&
+              departments.map((dept) => (
+                <label key={dept.id} className="flex items-center gap-2 mt-2">
+                  <input type="checkbox" checked={selectedDepartment.includes(dept.name)} onChange={() => toggleCheckbox("department", dept.name)} />
+                  {dept.name}
+                </label>
+              ))}
+          </div>
         </div>
 
         {/* Date Range */}

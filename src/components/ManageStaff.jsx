@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { RiSearchLine } from "react-icons/ri";
+import { RiSearchLine, RiSortAsc, RiSortDesc } from "react-icons/ri";
 import Layout from "./Layout";
 import filterIcon from "../assets/Images/ManageStaffImg/filterImg.png";
 import shortbyIcon from "../assets/Images/ManageStaffImg/ShortbyImg.png";
@@ -34,7 +34,7 @@ const ManageStaff = () => {
   // console.log(`testing ${tokens}`);
   // console.log(users);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [designation, setDesignation] = useState("");
@@ -45,8 +45,8 @@ const ManageStaff = () => {
   const [toDate, setToDate] = useState("");
   const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
   const [departments, setDepartments] = useState([]);
-  const [staffs, setStaffs] = useState([]);
-  const [filteredStaffs, setFilteredStaffs] = useState([]);
+  const [staffs, setStaffs] = useState(null);
+  const [filteredStaffs, setFilteredStaffs] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [countryCode, setCountryCode] = useState("+91");
 
@@ -73,6 +73,14 @@ const ManageStaff = () => {
 
   const DEPT_API_URL = "https://crp.mydevfactory.com/api/users/departments/";
   const STAFF_API_URL = "https://crp.mydevfactory.com/api/users/staffs/";
+
+  // Add sort state variables
+  const [sortConfig, setSortConfig] = useState({
+    name: null,
+    department: null,
+    contact: null,
+    site: null,
+  });
 
   const fetchDepartments = useCallback(async () => {
     setLoading(true);
@@ -101,13 +109,21 @@ const ManageStaff = () => {
           "Content-Type": "application/json",
         },
       });
-      setStaffs(response.data);
-      setFilteredStaffs(response.data);
+      if (response.data && Array.isArray(response.data)) {
+        setStaffs(response.data);
+        setFilteredStaffs(response.data);
+      } else {
+        setStaffs([]);
+        setFilteredStaffs([]);
+      }
     } catch (error) {
       console.error("Error fetching staff data:", error.response ? error.response.data : error);
       toast.error("Failed to fetch staff data");
+      setStaffs([]);
+      setFilteredStaffs([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [tokens]);
 
   console.log(departments);
@@ -453,58 +469,72 @@ const ManageStaff = () => {
     // Start with all staff or current filtered list if search is active
     let sorted = searchTerm ? [...filteredStaffs] : [...staffs];
 
-    // Filter by designation and department if specified
-    if (designation || department) {
-      sorted = sorted.filter((staff) => {
-        // Check designation filter
-        const matchesDesignation = !designation || (staff.designation && staff.designation.toLowerCase() === designation.toLowerCase());
+    // Sort the staff list
+    sorted.sort((a, b) => {
+      // If both designation and department are selected
+      if (designation && department) {
+        // Check if staff matches both criteria
+        const aMatches = a.designation?.toLowerCase() === designation.toLowerCase() && a.department?.toString() === department.toString();
+        const bMatches = b.designation?.toLowerCase() === designation.toLowerCase() && b.department?.toString() === department.toString();
 
-        // Check department filter
-        const matchesDepartment = !department || (staff.department && staff.department.toString() === department.toString());
-
-        // Return true only if both conditions are met
-        return matchesDesignation && matchesDepartment;
-      });
-    }
-
-    // Sort the filtered results
-    if (department) {
-      // Sort by department name
-      sorted.sort((a, b) => {
-        const deptA = departments.find((d) => d.id.toString() === a.department?.toString())?.name || "";
-        const deptB = departments.find((d) => d.id.toString() === b.department?.toString())?.name || "";
-
-        if (sortOrder === "asc") {
-          return deptA.localeCompare(deptB);
-        } else {
-          return deptB.localeCompare(deptA);
+        // If one matches and the other doesn't, the matching one comes first
+        if (aMatches !== bMatches) {
+          return aMatches ? -1 : 1;
         }
-      });
-    } else if (designation) {
-      // Sort by designation
-      sorted.sort((a, b) => {
+
+        // If both match or both don't match, sort by designation first
         const desA = a.designation || "";
         const desB = b.designation || "";
+        const designationCompare = desA.localeCompare(desB);
 
-        if (sortOrder === "asc") {
-          return desA.localeCompare(desB);
-        } else {
-          return desB.localeCompare(desA);
+        // If designations are equal, then compare by department
+        if (designationCompare === 0) {
+          const deptA = departments.find((d) => d.id.toString() === a.department?.toString())?.name || "";
+          const deptB = departments.find((d) => d.id.toString() === b.department?.toString())?.name || "";
+          return sortOrder === "asc" ? deptA.localeCompare(deptB) : deptB.localeCompare(deptA);
         }
-      });
-    } else {
-      // Sort by name as default
-      sorted.sort((a, b) => {
+
+        return sortOrder === "asc" ? designationCompare : -designationCompare;
+      }
+      // If only designation is selected
+      else if (designation) {
+        // Check if staff matches designation
+        const aMatches = a.designation?.toLowerCase() === designation.toLowerCase();
+        const bMatches = b.designation?.toLowerCase() === designation.toLowerCase();
+
+        // If one matches and the other doesn't, the matching one comes first
+        if (aMatches !== bMatches) {
+          return aMatches ? -1 : 1;
+        }
+
+        // If both match or both don't match, sort by designation
+        const desA = a.designation || "";
+        const desB = b.designation || "";
+        return sortOrder === "asc" ? desA.localeCompare(desB) : desB.localeCompare(desA);
+      }
+      // If only department is selected
+      else if (department) {
+        // Check if staff matches department
+        const aMatches = a.department?.toString() === department.toString();
+        const bMatches = b.department?.toString() === department.toString();
+
+        // If one matches and the other doesn't, the matching one comes first
+        if (aMatches !== bMatches) {
+          return aMatches ? -1 : 1;
+        }
+
+        // If both match or both don't match, sort by department name
+        const deptA = departments.find((d) => d.id.toString() === a.department?.toString())?.name || "";
+        const deptB = departments.find((d) => d.id.toString() === b.department?.toString())?.name || "";
+        return sortOrder === "asc" ? deptA.localeCompare(deptB) : deptB.localeCompare(deptA);
+      }
+      // Default sort by name
+      else {
         const nameA = a.name || "";
         const nameB = b.name || "";
-
-        if (sortOrder === "asc") {
-          return nameA.localeCompare(nameB);
-        } else {
-          return nameB.localeCompare(nameA);
-        }
-      });
-    }
+        return sortOrder === "asc" ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+      }
+    });
 
     // Update the filtered staff list with our sorted results
     setFilteredStaffs(sorted);
@@ -520,7 +550,28 @@ const ManageStaff = () => {
   };
 
   const handleFilterApply = () => {
-    // Add filter logic here
+    // Start with all staff
+    let filtered = [...staffs];
+
+    // Filter by selected departments
+    if (selectedDepartment.length > 0) {
+      filtered = filtered.filter((staff) => {
+        // Find the department name for the staff's department ID
+        const staffDepartment = departments.find((dept) => dept.id.toString() === staff.department?.toString());
+        return staffDepartment && selectedDepartment.includes(staffDepartment.name);
+      });
+    }
+
+    // Update the filtered staff list
+    setFilteredStaffs(filtered);
+
+    // Show success message with the count of displayed staff
+    toast.success(`Filtered ${filtered.length} staff members`, {
+      position: "top-right",
+      autoClose: 2000,
+    });
+
+    // Close the modal
     setIsFilterModalOpen(false);
   };
   const toggleCheckbox = (type, value) => {
@@ -529,6 +580,58 @@ const ManageStaff = () => {
     } else if (type === "department") {
       setSelectedDepartment((prev) => (prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]));
     }
+  };
+
+  // Add sorting function
+  const handleSort = (column) => {
+    let newSortConfig = { ...sortConfig };
+
+    // Toggle sort direction
+    if (newSortConfig[column] === "asc") {
+      newSortConfig[column] = "desc";
+    } else if (newSortConfig[column] === "desc") {
+      newSortConfig[column] = "asc";
+    } else {
+      newSortConfig[column] = "asc";
+    }
+
+    setSortConfig(newSortConfig);
+
+    // Sort the data
+    let sortedData = [...filteredStaffs];
+    sortedData.sort((a, b) => {
+      let aValue, bValue;
+
+      switch (column) {
+        case "name":
+          aValue = a.name?.toLowerCase() || "";
+          bValue = b.name?.toLowerCase() || "";
+          break;
+        case "department":
+          aValue = a.department_name?.toLowerCase() || "";
+          bValue = b.department_name?.toLowerCase() || "";
+          break;
+        case "contact":
+          // Sort by phone number
+          aValue = a.phone?.replace(/\D/g, "") || "";
+          bValue = b.phone?.replace(/\D/g, "") || "";
+          break;
+        case "site":
+          aValue = a.site?.toLowerCase() || "";
+          bValue = b.site?.toLowerCase() || "";
+          break;
+        default:
+          return 0;
+      }
+
+      if (newSortConfig[column] === "asc") {
+        return aValue.localeCompare(bValue);
+      } else {
+        return bValue.localeCompare(aValue);
+      }
+    });
+
+    setFilteredStaffs(sortedData);
   };
 
   return (
@@ -543,19 +646,29 @@ const ManageStaff = () => {
               <input
                 type="text"
                 placeholder="Search"
-                className="pl-10 pr-4 py-2 w-[20vw] border-2 border-[#BBA14F] rounded-lg bg-transparent text-white focus:outline-none"
+                className="pl-10 pr-12 py-2 w-[20vw] border-2 border-[#BBA14F] rounded-lg bg-transparent text-white focus:outline-none"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+              <button
+                className="absolute right-0 top-1/2 transform -translate-y-1/2 hover:opacity-80 transition-opacity"
+                onClick={() => {
+                  // Trigger search functionality
+                  const searchEvent = { target: { value: searchTerm } };
+                  setSearchTerm(searchTerm);
+                }}
+              >
+                <img src={shortbyIcon} alt="Search" className="w-8 h-8" />
+              </button>
             </div>
 
             {/* Filter and Sort By */}
-            <button className="flex items-center text-white rounded-md" onClick={() => setIsSortModalOpen(true)}>
+            {/* <button className="flex items-center text-white rounded-md" onClick={() => setIsSortModalOpen(true)}>
               <img src={shortbyIcon} alt="Sort By" className="w-10 h-10" />
-            </button>
-            <button className="flex items-center text-white rounded-md" onClick={() => setIsFilterModalOpen(true)}>
+            </button> */}
+            {/* <button className="flex items-center text-white rounded-md" onClick={() => setIsFilterModalOpen(true)}>
               <img src={filterIcon} alt="Filter" className="w-10 h-10" />
-            </button>
+            </button> */}
           </div>
 
           {/* Add Staff Button */}
@@ -572,18 +685,49 @@ const ManageStaff = () => {
           <table className="w-full bg-[#171717] rounded-lg">
             <thead>
               <tr className="text-left text-[#818181] border-b border-gray-700 sticky top-0 bg-black">
-                <th className="py-3 px-4">Name</th>
-                <th className="py-3 px-4">Department</th>
-                <th className="py-3 px-4">Contact Information</th>
-                <th className="py-3 px-4">Site(Location)</th>
+                <th className="py-3 px-4">
+                  <div className="flex items-center justify-between">
+                    Name
+                    <button onClick={() => handleSort("name")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
+                      {sortConfig.name === "asc" ? <RiSortAsc size={20} /> : sortConfig.name === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
+                    </button>
+                  </div>
+                </th>
+                <th className="py-3 px-4">
+                  <div className="flex items-center justify-between">
+                    Department
+                    <button onClick={() => handleSort("department")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
+                      {sortConfig.department === "asc" ? <RiSortAsc size={20} /> : sortConfig.department === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
+                    </button>
+                  </div>
+                </th>
+                <th className="py-3 px-4">
+                  <div className="flex items-center justify-between">
+                    Contact Information
+                    <button onClick={() => handleSort("contact")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
+                      {sortConfig.contact === "asc" ? <RiSortAsc size={20} /> : sortConfig.contact === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
+                    </button>
+                  </div>
+                </th>
+                <th className="py-3 px-4">
+                  <div className="flex items-center justify-between">
+                    Site(Location)
+                    <button onClick={() => handleSort("site")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
+                      {sortConfig.site === "asc" ? <RiSortAsc size={20} /> : sortConfig.site === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
+                    </button>
+                  </div>
+                </th>
                 <th className="py-3 px-4">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {loading ? (
+              {loading || staffs === null ? (
                 <tr>
                   <td colSpan="5" className="py-4 px-4 text-center text-white">
-                    Loading...
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#BBA14F]"></div>
+                      <span className="ml-2">Loading staff data...</span>
+                    </div>
                   </td>
                 </tr>
               ) : filteredStaffs && filteredStaffs.length > 0 ? (
@@ -619,13 +763,19 @@ const ManageStaff = () => {
                     </td>
                   </tr>
                 ))
-              ) : (
+              ) : !loading && staffs.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="py-4 px-4 text-center text-white">
-                    {searchTerm ? "No matching staff found" : "No staff data available"}
+                    No staff data available
                   </td>
                 </tr>
-              )}
+              ) : !loading && searchTerm ? (
+                <tr>
+                  <td colSpan="5" className="py-4 px-4 text-center text-white">
+                    No matching staff found
+                  </td>
+                </tr>
+              ) : null}
             </tbody>
           </table>
         </div>
@@ -678,6 +828,7 @@ const ManageStaff = () => {
         toDate={toDate}
         setToDate={setToDate}
         handleFilterApply={handleFilterApply}
+        departments={departments}
       />
 
       {/* Add Staff Modal */}

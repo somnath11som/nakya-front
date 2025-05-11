@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import logoImg from "../assets/Images/loginImg/LogoImg.png";
@@ -7,14 +7,13 @@ import sidebaricon2 from "../assets/Images/dashbordimgs/sidebaricon2.png";
 import sidebaricon7 from "../assets/Images/dashbordimgs/sidebaricon7.png";
 import sidebaricon10 from "../assets/Images/dashbordimgs/sidebaricon10.png";
 
-// Milestone 3 
+// Milestone 3
 import sidebaricon3 from "../assets/Images/dashbordimgs/sidebaricon3.png";
 import sidebaricon4 from "../assets/Images/dashbordimgs/sidebaricon4.png";
 import sidebaricon5 from "../assets/Images/dashbordimgs/sidebaricon5.png";
 import sidebaricon6 from "../assets/Images/dashbordimgs/sidebaricon6.png";
 import sidebaricon8 from "../assets/Images/dashbordimgs/sidebaricon8.png";
 import sidebaricon9 from "../assets/Images/dashbordimgs/sidebaricon9.png";
-
 
 import axios from "axios";
 import { logout, setUser } from "../redux/userSlice";
@@ -32,14 +31,11 @@ const sidebarItems = [
   { icon: sidebaricon1, label: "Dashboard", path: "/dashboard" },
   { icon: sidebaricon2, label: "Manage Department", path: "/manage-dept" },
   { icon: sidebaricon7, label: "Manage Instruments", path: "/manage-instru" },
-  { icon: sidebaricon10, label: "Manage Parameters", path: "/manage-parameters" },
-
-
-  // Milestone 3 
   { icon: sidebaricon3, label: "Manage Staff", path: "/manage-staff" },
   { icon: sidebaricon4, label: "Create Experiment", path: "/create-exp" },
   { icon: sidebaricon5, label: "Track Experiment", path: "/track-exp" },
   { icon: sidebaricon9, label: "Experiment History", path: "/exp-history" },
+  { icon: sidebaricon10, label: "Manage Parameters", path: "/manage-parameters" },
   { icon: sidebaricon8, label: "ELN Reports", path: "/eln-reports" },
   { icon: sidebaricon6, label: "Data Visualization", path: "/data-visualization" },
 ];
@@ -122,11 +118,11 @@ const Layout = ({ title, children }) => {
   return (
     <div className="flex bg-black text-white">
       {/* Sidebar */}
-      <aside className="fixed md:relative w-72 bg-black p-6 h-screen">
+      <aside className="fixed overflow-y-auto h-screen scrollbar-hide w-72 bg-black p-6">
         <div className="flex items-center space-x-3 mb-14">
           <img src={logoImg} alt="Logo" className="w-1/2" />
         </div>
-        <ul className="space-y-6">
+        <ul className="space-y-5">
           {sidebarItems.map((item, index) => (
             <li key={index}>
               <Link to={item.path} className="flex items-center space-x-4 text-[#FCF0E8] hover:text-[#BBA14F]">
@@ -141,7 +137,7 @@ const Layout = ({ title, children }) => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 p-2">
+      <div className="flex-1 p-2 md:ms-[280px] h-screen overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="flex justify-between items-center px-8 py-4 bg-black mb-2 border-b border-[#202020] my-4 relative">
           <h2 className="text-3xl font-semibold text-white">{title}</h2>
@@ -192,7 +188,3 @@ const Layout = ({ title, children }) => {
 };
 
 export default Layout;
-
-
-
-

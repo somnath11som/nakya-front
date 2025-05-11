@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { FaPlus } from "react-icons/fa";
+// import { FaPlus } from "react-icons/fa";
 // import { Link } from "react-router-dom";
 
 import editicon from "../assets/Images/manageDeptImg/editicon.png";
@@ -34,7 +34,7 @@ const ManageDepartment = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [errors, setErrors] = useState({
     name: false,
-    depDes: false
+    depDes: false,
   });
 
   const API_URL = "https://crp.mydevfactory.com/api/users/departments/";
@@ -65,11 +65,11 @@ const ManageDepartment = () => {
   // Submit new department
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     let hasErrors = false;
     const newErrors = {
       name: false,
-      depDes: false
+      depDes: false,
     };
 
     if (!name.trim()) {
@@ -77,7 +77,7 @@ const ManageDepartment = () => {
       hasErrors = true;
       toast.error("Department name is required!", {
         position: "top-right",
-        autoClose: 3000
+        autoClose: 3000,
       });
     }
 
@@ -86,7 +86,7 @@ const ManageDepartment = () => {
       hasErrors = true;
       toast.error("Department description is required!", {
         position: "top-right",
-        autoClose: 3000
+        autoClose: 3000,
       });
     }
 
@@ -110,14 +110,14 @@ const ManageDepartment = () => {
       setResponseMessage("Department created successfully!");
       toast.success("Department created successfully!", {
         position: "top-right",
-        autoClose: 3000
+        autoClose: 3000,
       });
       setIsModalOpen(false);
       setName("");
       setDepDes("");
       setErrors({
         name: false,
-        depDes: false
+        depDes: false,
       });
       fetchDepartments(); // Refresh data
     } catch (error) {
@@ -125,7 +125,7 @@ const ManageDepartment = () => {
       setResponseMessage("Error submitting data.");
       toast.error("Error creating department. Please try again.", {
         position: "top-right",
-        autoClose: 3000
+        autoClose: 3000,
       });
     } finally {
       setIsSubmitting(false);
@@ -142,7 +142,7 @@ const ManageDepartment = () => {
     let hasErrors = false;
     const newErrors = {
       name: false,
-      depDes: false
+      depDes: false,
     };
 
     if (!selectedDepartment?.name?.trim()) {
@@ -150,7 +150,7 @@ const ManageDepartment = () => {
       hasErrors = true;
       toast.error("Department name is required!", {
         position: "top-right",
-        autoClose: 3000
+        autoClose: 3000,
       });
     }
 
@@ -159,7 +159,7 @@ const ManageDepartment = () => {
       hasErrors = true;
       toast.error("Department description is required!", {
         position: "top-right",
-        autoClose: 3000
+        autoClose: 3000,
       });
     }
 
@@ -181,7 +181,7 @@ const ManageDepartment = () => {
         setIsEditModalOpen(false);
         toast.success("Department updated successfully!", {
           position: "top-right",
-          autoClose: 3000
+          autoClose: 3000,
         });
         fetchDepartments();
       }
@@ -190,7 +190,7 @@ const ManageDepartment = () => {
       setResponseMessage("Error submitting data.");
       toast.error("Error updating department. Please try again.", {
         position: "top-right",
-        autoClose: 3000
+        autoClose: 3000,
       });
     } finally {
       setIsUpdating(false);
@@ -211,7 +211,7 @@ const ManageDepartment = () => {
         setIsDeleteModalOpen(false);
         toast.success("Department deleted successfully!", {
           position: "top-right",
-          autoClose: 3000
+          autoClose: 3000,
         });
         fetchDepartments();
       }
@@ -220,7 +220,7 @@ const ManageDepartment = () => {
       setResponseMessage("Error submitting data.");
       toast.error("Error deleting department. Please try again.", {
         position: "top-right",
-        autoClose: 3000
+        autoClose: 3000,
       });
     } finally {
       setIsDeleting(false);
@@ -236,7 +236,6 @@ const ManageDepartment = () => {
             className="flex items-center space-x-2 bg-[#BBA14F] hover:bg-yellow-600 text-[#FCF0E8] px-4 py-2 rounded-lg font-semibold transition transform hover:scale-105"
             onClick={() => setIsModalOpen(true)}
           >
-           
             <span>Add New Department</span>
           </button>
         </div>
@@ -259,7 +258,7 @@ const ManageDepartment = () => {
                   <tr key={dept.id} className="hover:bg-gray-800 transition duration-300">
                     <td className="py-3 px-5 border border-[#202020]">{dept.name}</td>
                     {/* <td className="py-3 px-5 border border-[#202020]">{dept.dep_des}</td> */}
-                    <td className="py-3 px-5 border border-[#202020]">0</td>
+                    <td className="py-3 px-5 border border-[#202020]">{dept?.staff_count}</td>
                     <td className="py-3 px-5 border border-[#202020] flex justify-center space-x-4">
                       <button
                         className="hover:scale-125 transition duration-300"
@@ -309,41 +308,40 @@ const ManageDepartment = () => {
 
             <h2 className="text-lg font-bold text-center">Create A New Department</h2>
             <p className="text-center text-sm text-gray-500">Enter details to create a new department.</p>
-            <form onSubmit={handleSubmit} >
+            <form onSubmit={handleSubmit}>
               <div className="mt-4 ">
                 <label className="block text-sm font-semibold">Department Name</label>
-                <input 
-                  type="text" 
-                  className={`w-full p-2 border rounded-md ${errors.name ? 'border-red-500' : ''}`}
-                  placeholder="Enter Department Name" 
+                <input
+                  type="text"
+                  className={`w-full p-2 border rounded-md ${errors.name ? "border-red-500" : ""}`}
+                  placeholder="Enter Department Name"
                   value={name}
                   onChange={(e) => {
                     setName(e.target.value);
-                    setErrors({...errors, name: false});
-                  }} 
+                    setErrors({ ...errors, name: false });
+                  }}
                 />
               </div>
 
               <div className="mt-4">
                 <label className="block text-sm font-semibold">Description</label>
-                <textarea 
-                  className={`w-full h-[100px] p-2 border rounded-md ${errors.depDes ? 'border-red-500' : ''}`}
-                  placeholder="Enter Description" 
+                <textarea
+                  className={`w-full h-[100px] p-2 border rounded-md ${errors.depDes ? "border-red-500" : ""}`}
+                  placeholder="Enter Description"
                   value={depDes}
                   onChange={(e) => {
                     setDepDes(e.target.value);
-                    setErrors({...errors, depDes: false});
+                    setErrors({ ...errors, depDes: false });
                   }}
                 ></textarea>
               </div>
 
-              <button 
-                type="submit" 
-              
+              <button
+                type="submit"
                 className="bg-[#BBA14F] hover:bg-yellow-600 text-white px-9 py-2 rounded-lg font-semibold transition transform hover:scale-105 block mx-auto mt-4"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Save Department'}
+                {isSubmitting ? "Submitting..." : "Save Department"}
               </button>
             </form>
           </div>
@@ -355,27 +353,32 @@ const ManageDepartment = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white text-black p-6 rounded-lg w-1/3 relative">
             <span className="absolute top-0 right-0 bg-[#b89e5a] p-3.5 rounded-bl-3xl rounded-tr-lg"></span>
-            <button className="hover:text-black text-white absolute right-1 top-0" onClick={() => {
-              setIsEditModalOpen(false);
-              setSelectedDepartment(null);
-            }}>
+            <button
+              className="hover:text-black text-white absolute right-1 top-0"
+              onClick={() => {
+                setIsEditModalOpen(false);
+                setSelectedDepartment(null);
+              }}
+            >
               ✕
             </button>
 
             <h2 className="text-lg font-bold text-center">Edit Department</h2>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              editHandler();
-            }}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                editHandler();
+              }}
+            >
               <div className="mt-4">
                 <label className="block text-sm font-semibold">Department Name</label>
                 <input
                   type="text"
-                  className={`w-full p-2 border rounded-md ${errors.name ? 'border-red-500' : ''}`}
+                  className={`w-full p-2 border rounded-md ${errors.name ? "border-red-500" : ""}`}
                   value={selectedDepartment.name}
                   onChange={(e) => {
                     setSelectedDepartment({ ...selectedDepartment, name: e.target.value });
-                    setErrors({...errors, name: false});
+                    setErrors({ ...errors, name: false });
                   }}
                 />
               </div>
@@ -383,21 +386,21 @@ const ManageDepartment = () => {
               <div className="mt-4">
                 <label className="block text-sm font-semibold">Description</label>
                 <textarea
-                  className={`w-full h-[100px] p-2 border rounded-md ${errors.depDes ? 'border-red-500' : ''}`}
+                  className={`w-full h-[100px] p-2 border rounded-md ${errors.depDes ? "border-red-500" : ""}`}
                   value={selectedDepartment.dep_des}
                   onChange={(e) => {
                     setSelectedDepartment({ ...selectedDepartment, dep_des: e.target.value });
-                    setErrors({...errors, depDes: false});
+                    setErrors({ ...errors, depDes: false });
                   }}
                 ></textarea>
               </div>
 
-              <button 
+              <button
                 type="submit"
                 className="bg-[#BBA14F] hover:bg-yellow-600 text-white px-9 py-2 rounded-lg font-semibold transition transform hover:scale-105 block mx-auto mt-4"
                 disabled={isUpdating}
               >
-                {isUpdating ? 'Updating...' : 'Update Department'}
+                {isUpdating ? "Updating..." : "Update Department"}
               </button>
             </form>
           </div>
@@ -415,19 +418,17 @@ const ManageDepartment = () => {
 
             <h2 className="text-lg font-bold text-center">Delete Department</h2>
             <div className="mt-4">
-              <p className="text-sm text-center">
-                Are you sure you want to delete the department "{selectedDepartment.name}"? This action cannot be undone.
-              </p>
-              
-              <button 
+              <p className="text-sm text-center">Are you sure you want to delete the department &quot;{selectedDepartment.name}&quot;? This action cannot be undone.</p>
+
+              <button
                 className="bg-[#BBA14F] hover:bg-yellow-600 text-white px-9 py-2 rounded-lg font-semibold transition transform hover:scale-105 block mx-auto mt-4"
                 onClick={deleteHandler}
                 disabled={isDeleting}
               >
-                {isDeleting ? 'Deleting...' : 'Delete Department'}
+                {isDeleting ? "Deleting..." : "Delete Department"}
               </button>
 
-              <button 
+              <button
                 className="bg-[#BBA14F] hover:bg-yellow-600 text-white px-9 py-2 rounded-lg font-semibold transition transform hover:scale-105 block mx-auto mt-4"
                 onClick={() => setIsDeleteModalOpen(false)}
               >
@@ -438,125 +439,98 @@ const ManageDepartment = () => {
         </div>
       )}
 
-     
-     {/* View Department Modal */}
-{/* View Department Modal */}
-{isViewModalOpen && selectedDepartment && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-white text-black p-6 rounded-lg w-2/3 relative">
-     
-
-      <span className="absolute top-0 right-0 bg-[#b89e5a] p-3.5 rounded-bl-3xl rounded-tr-lg"></span>
+      {/* View Department Modal */}
+      {/* View Department Modal */}
+      {isViewModalOpen && selectedDepartment && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-black p-6 rounded-lg w-2/3 relative">
+            <span className="absolute top-0 right-0 bg-[#b89e5a] p-3.5 rounded-bl-3xl rounded-tr-lg"></span>
             <button className="hover:text-black text-white absolute right-1 top-0" onClick={() => setIsViewModalOpen(false)}>
               ✕
             </button>
 
-      {/* Header */}
-      <h2 className="text-xl font-bold text-center">Team List of Department</h2>
-      <p className="text-center text-gray-500">{selectedDepartment.name}</p>
+            {/* Header */}
+            <h2 className="text-xl font-bold text-center">Team List of Department</h2>
+            <p className="text-center text-gray-500">{selectedDepartment.name}</p>
 
-      {/* Table */}
-      <div className="mt-4 overflow-x-auto">
-        <table className="w-full border-collapse border rounded-lg">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-4 py-2 text-left">Staff Name</th>
-              <th className="px-4 py-2 text-left">Designation</th>
-              <th className="px-4 py-2 text-left">Contact Information</th>
-              <th className="px-4 py-2 text-left">Assigned Tasks</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-t">
-              <td className="px-4 py-2 flex items-center">
-                <img
-                  src="/path-to-avatar.png"
-                  alt="avatar"
-                  className="w-8 h-8 rounded-full mr-2"
-                />
-                Dr. Johnson
-              </td>
-              <td className="px-4 py-2">Sr. Lab Assistant</td>
-              <td className="px-4 py-2">
-                <p>+1 3625867592</p>
-                <p className="text-sm text-gray-500">john.doe@nakya.com</p>
-              </td>
-              <td className="px-4 py-2">Figuring out cell expansion.</td>
-            </tr>
-            <tr className="border-t">
-              <td className="px-4 py-2 flex items-center">
-                <img
-                  src="/path-to-avatar.png"
-                  alt="avatar"
-                  className="w-8 h-8 rounded-full mr-2"
-                />
-                Dr. Smith
-              </td>
-              <td className="px-4 py-2">Sr. Lab Assistant</td>
-              <td className="px-4 py-2">
-                <p>+1 3625867592</p>
-                <p className="text-sm text-gray-500">john.doe@nakya.com</p>
-              </td>
-              <td className="px-4 py-2">Figuring out cell expansion.</td>
-            </tr>
-            <tr className="border-t">
-              <td className="px-4 py-2 flex items-center">
-                <img
-                  src="/path-to-avatar.png"
-                  alt="avatar"
-                  className="w-8 h-8 rounded-full mr-2"
-                />
-                Dr. Williams
-              </td>
-              <td className="px-4 py-2">Sr. Lab Assistant</td>
-              <td className="px-4 py-2">
-                <p>+1 3625867592</p>
-                <p className="text-sm text-gray-500">john.doe@nakya.com</p>
-              </td>
-              <td className="px-4 py-2">Figuring out cell expansion.</td>
-            </tr>
-            <tr className="border-t">
-              <td className="px-4 py-2 flex items-center">
-                <img
-                  src="/path-to-avatar.png"
-                  alt="avatar"
-                  className="w-8 h-8 rounded-full mr-2"
-                />
-                Dr. Jones
-              </td>
-              <td className="px-4 py-2">Lab Assistant</td>
-              <td className="px-4 py-2">
-                <p>+1 3625867592</p>
-                <p className="text-sm text-gray-500">john.doe@nakya.com</p>
-              </td>
-              <td className="px-4 py-2">Figuring out cell expansion.</td>
-            </tr>
-            <tr className="border-t">
-              <td className="px-4 py-2 flex items-center">
-                <img
-                  src="/path-to-avatar.png"
-                  alt="avatar"
-                  className="w-8 h-8 rounded-full mr-2"
-                />
-                Dr. Brown
-              </td>
-              <td className="px-4 py-2">Lab Assistant</td>
-              <td className="px-4 py-2">
-                <p>+1 3625867592</p>
-                <p className="text-sm text-gray-500">john.doe@nakya.com</p>
-              </td>
-              <td className="px-4 py-2">Figuring out cell expansion.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-
-    </div>
-  </div>
-)}
-
-
+            {/* Table */}
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full border-collapse border rounded-lg">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-2 text-left">Staff Name</th>
+                    <th className="px-4 py-2 text-left">Designation</th>
+                    <th className="px-4 py-2 text-left">Contact Information</th>
+                    <th className="px-4 py-2 text-left">Assigned Tasks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-t">
+                    <td className="px-4 py-2 flex items-center">
+                      <img src="/path-to-avatar.png" alt="avatar" className="w-8 h-8 rounded-full mr-2" />
+                      Dr. Johnson
+                    </td>
+                    <td className="px-4 py-2">Sr. Lab Assistant</td>
+                    <td className="px-4 py-2">
+                      <p>+1 3625867592</p>
+                      <p className="text-sm text-gray-500">john.doe@nakya.com</p>
+                    </td>
+                    <td className="px-4 py-2">Figuring out cell expansion.</td>
+                  </tr>
+                  <tr className="border-t">
+                    <td className="px-4 py-2 flex items-center">
+                      <img src="/path-to-avatar.png" alt="avatar" className="w-8 h-8 rounded-full mr-2" />
+                      Dr. Smith
+                    </td>
+                    <td className="px-4 py-2">Sr. Lab Assistant</td>
+                    <td className="px-4 py-2">
+                      <p>+1 3625867592</p>
+                      <p className="text-sm text-gray-500">john.doe@nakya.com</p>
+                    </td>
+                    <td className="px-4 py-2">Figuring out cell expansion.</td>
+                  </tr>
+                  <tr className="border-t">
+                    <td className="px-4 py-2 flex items-center">
+                      <img src="/path-to-avatar.png" alt="avatar" className="w-8 h-8 rounded-full mr-2" />
+                      Dr. Williams
+                    </td>
+                    <td className="px-4 py-2">Sr. Lab Assistant</td>
+                    <td className="px-4 py-2">
+                      <p>+1 3625867592</p>
+                      <p className="text-sm text-gray-500">john.doe@nakya.com</p>
+                    </td>
+                    <td className="px-4 py-2">Figuring out cell expansion.</td>
+                  </tr>
+                  <tr className="border-t">
+                    <td className="px-4 py-2 flex items-center">
+                      <img src="/path-to-avatar.png" alt="avatar" className="w-8 h-8 rounded-full mr-2" />
+                      Dr. Jones
+                    </td>
+                    <td className="px-4 py-2">Lab Assistant</td>
+                    <td className="px-4 py-2">
+                      <p>+1 3625867592</p>
+                      <p className="text-sm text-gray-500">john.doe@nakya.com</p>
+                    </td>
+                    <td className="px-4 py-2">Figuring out cell expansion.</td>
+                  </tr>
+                  <tr className="border-t">
+                    <td className="px-4 py-2 flex items-center">
+                      <img src="/path-to-avatar.png" alt="avatar" className="w-8 h-8 rounded-full mr-2" />
+                      Dr. Brown
+                    </td>
+                    <td className="px-4 py-2">Lab Assistant</td>
+                    <td className="px-4 py-2">
+                      <p>+1 3625867592</p>
+                      <p className="text-sm text-gray-500">john.doe@nakya.com</p>
+                    </td>
+                    <td className="px-4 py-2">Figuring out cell expansion.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };

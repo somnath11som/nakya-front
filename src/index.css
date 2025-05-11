@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-
-/* container for each section */                                                                                                                                                                                                                      
+/* container for each section */
 .container {
   max-width: 1200px;
 }
@@ -76,3 +75,29 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+
+.clr_fade {
+  color: #514d40;
+}
+.icon_style {
+  color: #bba14f;
+  font-size: 24px;
+  margin: 0 6px;
+  cursor: pointer;
+}
+.btn_style {
+  background-color: #fff;
+  color: #bba14f;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 4px 10px;
+  min-width: 110px;
+}
+.btn_style2 {
+  background-color: #000000;
+  color: #6c6c6c;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 4px 10px;
+  min-width: 110px;
+}

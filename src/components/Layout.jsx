@@ -122,7 +122,7 @@ const Layout = ({ title, children }) => {
   return (
     <div className="flex bg-black text-white">
       {/* Sidebar */}
-      <aside className="fixed md:relative w-72 bg-black p-6 h-screen">
+      <aside className="fixed md:relative min-w-[20vw] bg-black p-6 h-screen">
         <div className="flex items-center space-x-3 mb-14">
           <img src={logoImg} alt="Logo" className="w-1/2" />
         </div>

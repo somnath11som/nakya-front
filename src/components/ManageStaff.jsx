@@ -74,11 +74,13 @@ const ManageStaff = () => {
   const DEPT_API_URL = "https://crp.mydevfactory.com/api/users/departments/";
   const STAFF_API_URL = "https://crp.mydevfactory.com/api/users/staffs/";
 
-  // Add sort state variables
+  // Update sortConfig state to include new columns
   const [sortConfig, setSortConfig] = useState({
     name: null,
+    designation: null,
     department: null,
-    contact: null,
+    phone: null,
+    email: null,
     site: null,
   });
 
@@ -134,16 +136,20 @@ const ManageStaff = () => {
     fetchStaffs();
   }, [fetchDepartments, fetchStaffs]);
 
-  // Handle search functionality
-  useEffect(() => {
+  // Add a new function to handle search
+  const handleSearch = () => {
     if (searchTerm.trim() === "") {
       setFilteredStaffs(staffs);
     } else {
       const filtered = staffs.filter((staff) => {
         const searchLower = searchTerm.toLowerCase();
+        // Get department name from departments array using staff.department ID
+        const staffDepartment = departments.find((dept) => dept.id.toString() === staff.department?.toString());
+        const departmentName = staffDepartment ? staffDepartment.name.toLowerCase() : "";
+
         return (
           staff.name.toLowerCase().includes(searchLower) ||
-          (staff.department && typeof staff.department === "string" && staff.department.toLowerCase().includes(searchLower)) ||
+          departmentName.includes(searchLower) ||
           (staff.designation && typeof staff.designation === "string" && staff.designation.toLowerCase().includes(searchLower)) ||
           (staff.email && typeof staff.email === "string" && staff.email.toLowerCase().includes(searchLower)) ||
           (staff.phone && staff.phone.includes(searchTerm)) ||
@@ -152,7 +158,7 @@ const ManageStaff = () => {
       });
       setFilteredStaffs(filtered);
     }
-  }, [searchTerm, staffs]);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -582,7 +588,7 @@ const ManageStaff = () => {
     }
   };
 
-  // Add sorting function
+  // Update handleSort function to handle new columns
   const handleSort = (column) => {
     let newSortConfig = { ...sortConfig };
 
@@ -607,14 +613,21 @@ const ManageStaff = () => {
           aValue = a.name?.toLowerCase() || "";
           bValue = b.name?.toLowerCase() || "";
           break;
+        case "designation":
+          aValue = a.designation?.toLowerCase() || "";
+          bValue = b.designation?.toLowerCase() || "";
+          break;
         case "department":
           aValue = a.department_name?.toLowerCase() || "";
           bValue = b.department_name?.toLowerCase() || "";
           break;
-        case "contact":
-          // Sort by phone number
+        case "phone":
           aValue = a.phone?.replace(/\D/g, "") || "";
           bValue = b.phone?.replace(/\D/g, "") || "";
+          break;
+        case "email":
+          aValue = a.email?.toLowerCase() || "";
+          bValue = b.email?.toLowerCase() || "";
           break;
         case "site":
           aValue = a.site?.toLowerCase() || "";
@@ -648,16 +661,15 @@ const ManageStaff = () => {
                 placeholder="Search"
                 className="pl-10 pr-12 py-2 w-[20vw] border-2 border-[#BBA14F] rounded-lg bg-transparent text-white focus:outline-none"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 hover:opacity-80 transition-opacity"
-                onClick={() => {
-                  // Trigger search functionality
-                  const searchEvent = { target: { value: searchTerm } };
-                  setSearchTerm(searchTerm);
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  // If search bar is cleared, show all staff
+                  if (e.target.value.trim() === "") {
+                    setFilteredStaffs(staffs);
+                  }
                 }}
-              >
+              />
+              <button className="absolute right-0 top-1/2 transform -translate-y-1/2 hover:opacity-80 transition-opacity" onClick={handleSearch}>
                 <img src={shortbyIcon} alt="Search" className="w-8 h-8" />
               </button>
             </div>
@@ -681,103 +693,119 @@ const ManageStaff = () => {
         </div>
 
         {/* Staff Table */}
-        <div className="border border-[#202020] rounded-lg overflow-x-auto max-h-[calc(100vh-39vh)] overflow-auto scrollbar-hide">
-          <table className="w-full bg-[#171717] rounded-lg">
-            <thead>
-              <tr className="text-left text-[#818181] border-b border-gray-700 sticky top-0 bg-black">
-                <th className="py-3 px-4">
-                  <div className="flex items-center justify-between">
-                    Name
-                    <button onClick={() => handleSort("name")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
-                      {sortConfig.name === "asc" ? <RiSortAsc size={20} /> : sortConfig.name === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
-                    </button>
-                  </div>
-                </th>
-                <th className="py-3 px-4">
-                  <div className="flex items-center justify-between">
-                    Department
-                    <button onClick={() => handleSort("department")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
-                      {sortConfig.department === "asc" ? <RiSortAsc size={20} /> : sortConfig.department === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
-                    </button>
-                  </div>
-                </th>
-                <th className="py-3 px-4">
-                  <div className="flex items-center justify-between">
-                    Contact Information
-                    <button onClick={() => handleSort("contact")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
-                      {sortConfig.contact === "asc" ? <RiSortAsc size={20} /> : sortConfig.contact === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
-                    </button>
-                  </div>
-                </th>
-                <th className="py-3 px-4">
-                  <div className="flex items-center justify-between">
-                    Site(Location)
-                    <button onClick={() => handleSort("site")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
-                      {sortConfig.site === "asc" ? <RiSortAsc size={20} /> : sortConfig.site === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
-                    </button>
-                  </div>
-                </th>
-                <th className="py-3 px-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading || staffs === null ? (
-                <tr>
-                  <td colSpan="5" className="py-4 px-4 text-center text-white">
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#BBA14F]"></div>
-                      <span className="ml-2">Loading staff data...</span>
+        <div className="border border-[#202020] rounded-lg max-h-[calc(100vh-39vh)] max-w-[70vw] overflow-x-auto overflow-y-auto scrollbar-hide">
+          <div className="min-w-[98vw] ">
+            <table className="w-full bg-[#171717]  rounded-lg">
+              <thead>
+                <tr className="text-left text-[#818181] border-b border-gray-700 sticky top-0 bg-black">
+                  <th className="py-3 px-4 min-w-[200px]">
+                    <div className="flex items-center justify-between">
+                      Name
+                      <button onClick={() => handleSort("name")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
+                        {sortConfig.name === "asc" ? <RiSortAsc size={20} /> : sortConfig.name === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
+                      </button>
                     </div>
-                  </td>
+                  </th>
+                  <th className="py-3 px-4 min-w-[150px]">
+                    <div className="flex items-center justify-between">
+                      Designation
+                      <button onClick={() => handleSort("designation")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
+                        {sortConfig.designation === "asc" ? <RiSortAsc size={20} /> : sortConfig.designation === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
+                      </button>
+                    </div>
+                  </th>
+                  <th className="py-3 px-4 min-w-[150px]">
+                    <div className="flex items-center justify-between">
+                      Department
+                      <button onClick={() => handleSort("department")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
+                        {sortConfig.department === "asc" ? <RiSortAsc size={20} /> : sortConfig.department === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
+                      </button>
+                    </div>
+                  </th>
+                  <th className="py-3 px-4 min-w-[150px]">
+                    <div className="flex items-center justify-between">
+                      Phone Number
+                      <button onClick={() => handleSort("phone")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
+                        {sortConfig.phone === "asc" ? <RiSortAsc size={20} /> : sortConfig.phone === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
+                      </button>
+                    </div>
+                  </th>
+                  <th className="py-3 px-4 min-w-[200px]">
+                    <div className="flex items-center justify-between">
+                      Email
+                      <button onClick={() => handleSort("email")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
+                        {sortConfig.email === "asc" ? <RiSortAsc size={20} /> : sortConfig.email === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
+                      </button>
+                    </div>
+                  </th>
+                  <th className="py-3 px-4 min-w-[150px]">
+                    <div className="flex items-center justify-between">
+                      Site(Location)
+                      <button onClick={() => handleSort("site")} className="ml-2 text-[#BBA14F] hover:text-yellow-400">
+                        {sortConfig.site === "asc" ? <RiSortAsc size={20} /> : sortConfig.site === "desc" ? <RiSortDesc size={20} /> : <RiSortAsc size={20} />}
+                      </button>
+                    </div>
+                  </th>
+                  <th className="py-3 px-4 min-w-[100px]">Actions</th>
                 </tr>
-              ) : filteredStaffs && filteredStaffs.length > 0 ? (
-                filteredStaffs.map((staff, index) => (
-                  <tr key={index} className="border-t border-gray-700 hover:bg-gray-800 text-white">
-                    {/* Name and Role */}
-                    <td className="py-4 px-4 flex items-center gap-3">
-                      <img src={staff.photo ? `https://crp.mydevfactory.com/${staff.photo}` : profileImg} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
-                      <div>
-                        <p className="font-semibold">{staff.name}</p>
-                        <p className="text-gray-400 text-sm">{staff.designation}</p>
+              </thead>
+              <tbody>
+                {loading || staffs === null ? (
+                  <tr>
+                    <td colSpan="7" className="py-4 px-4 text-center text-white">
+                      <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#BBA14F]"></div>
+                        <span className="ml-2">Loading staff data...</span>
                       </div>
                     </td>
-                    {/* Department */}
-                    <td className="py-4 px-4">{staff.department_name}</td>
-                    {/* Contact Information */}
-                    <td className="py-4 px-4">
-                      <p>{staff.phone}</p>
-                      <p className="text-gray-400">{staff.email}</p>
-                    </td>
-                    {/* Location */}
-                    <td className="py-4 px-4">{staff.site}</td>
-                    {/* Actions */}
-                    <td className="py-4 px-4 flex items-center gap-3">
-                      <button className="hover:text-yellow-400" onClick={() => navigate(`/profile-details/${staff.id}`)}>
-                        <img src={viewIcon} alt="View" className="h-5" />
-                      </button>
+                  </tr>
+                ) : filteredStaffs && filteredStaffs.length > 0 ? (
+                  filteredStaffs.map((staff, index) => (
+                    <tr key={index} className="border-t border-gray-700 hover:bg-gray-800 text-white">
+                      {/* Name */}
+                      <td className="py-4 px-4 flex items-center gap-3">
+                        <img src={staff.photo ? `https://crp.mydevfactory.com/${staff.photo}` : profileImg} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                        <p className="font-semibold">{staff.name}</p>
+                      </td>
+                      {/* Designation */}
+                      <td className="py-4 px-4">{staff.designation}</td>
+                      {/* Department */}
+                      <td className="py-4 px-4">{staff.department_name}</td>
+                      {/* Phone Number */}
+                      <td className="py-4 px-4">{staff.phone}</td>
+                      {/* Email */}
+                      <td className="py-4 px-4">{staff.email}</td>
+                      {/* Location */}
+                      <td className="py-4 px-4">{staff.site}</td>
+                      {/* Actions */}
+                      <td className="py-4 px-4 flex items-center gap-3">
+                        <button className="hover:text-yellow-400" onClick={() => navigate(`/profile-details/${staff.id}`)}>
+                          <img src={viewIcon} alt="View" className="h-5" />
+                        </button>
 
-                      <div className="h-6 w-[1px] bg-gray-600"></div>
-                      <button className="hover:text-yellow-400" onClick={(e) => handleOptionsClick(e, staff.id)}>
-                        <img src={optionIcon} alt="Options" className="h-5" />
-                      </button>
+                        <div className="h-6 w-[1px] bg-gray-600"></div>
+                        <button className="hover:text-yellow-400" onClick={(e) => handleOptionsClick(e, staff.id)}>
+                          <img src={optionIcon} alt="Options" className="h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : !loading && staffs.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="py-4 px-4 text-center text-white">
+                      No staff data available
                     </td>
                   </tr>
-                ))
-              ) : !loading && staffs.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="py-4 px-4 text-center text-white">
-                    No staff data available
-                  </td>
-                </tr>
-              ) : !loading && searchTerm ? (
-                <tr>
-                  <td colSpan="5" className="py-4 px-4 text-center text-white">
-                    No matching staff found
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
+                ) : !loading && searchTerm ? (
+                  <tr>
+                    <td colSpan="7" className="py-4 px-4 text-center text-white">
+                      No matching staff found
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

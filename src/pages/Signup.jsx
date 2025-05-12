@@ -1,5 +1,3 @@
-
-
 // New code with profile image preview functionality
 import { useState } from "react";
 import leftsideImg from "../assets/Images/loginImg/leftimg.png";
@@ -7,17 +5,16 @@ import logoImg from "../assets/Images/loginImg/LogoImg.png";
 import profileImg from "../assets/Images/loginImg/profileImg.png";
 import uploadIcon from "../assets/Images/loginImg/uplodeicon.png";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUser } from "../redux/userSlice";
+// import { useDispatch } from "react-redux";
+// import { setUser } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { apiCallBack } from "../utils/fetchAPI";
-import { toast} from "react-toastify";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 const Signup = () => {
   // Redux and navigation hooks
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Password visibility states
@@ -26,7 +23,7 @@ const Signup = () => {
 
   // New state for profile image preview
   const [previewImage, setPreviewImage] = useState(null);
-  
+
   // Add state for country code
   const [countryCode, setCountryCode] = useState("+91");
 
@@ -47,7 +44,7 @@ const Signup = () => {
   const [formData, setFormData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [message,setMessage] = useState("")
+  // const [message, setMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
 
   // Handle input changes
@@ -79,7 +76,7 @@ const Signup = () => {
         ...fieldErrors,
         photo: "",
       });
-      
+
       // Create and set preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -103,139 +100,99 @@ const Signup = () => {
   };
 
   // Form validation
-  const validateForm = () => {
-    const errors = {};
+  // const validateForm = () => {
+  //   const errors = {};
 
-    if (!formData.first_name.trim())
-      errors.first_name = "First name is required";
-    if (!formData.last_name.trim()) errors.last_name = "Last name is required";
-    if (!formData.organization_name.trim())
-      errors.organization_name = "Organization name is required";
-    if (!formData.phone.trim()) errors.phone = "Phone number is required";
-    if (!formData.email.trim()) errors.email = "Email is required";
-    if (!formData.password) errors.password = "Password is required";
-    if (!formData.confirm_password)
-      errors.confirm_password = "Confirm password is required";
-    //if (!formData.photo) errors.photo = "Profile photo is required";
+  //   if (!formData.first_name.trim()) errors.first_name = "First name is required";
+  //   if (!formData.last_name.trim()) errors.last_name = "Last name is required";
+  //   if (!formData.organization_name.trim()) errors.organization_name = "Organization name is required";
+  //   if (!formData.phone.trim()) errors.phone = "Phone number is required";
+  //   if (!formData.email.trim()) errors.email = "Email is required";
+  //   if (!formData.password) errors.password = "Password is required";
+  //   if (!formData.confirm_password) errors.confirm_password = "Confirm password is required";
+  //   //if (!formData.photo) errors.photo = "Profile photo is required";
 
-    if (formData.password !== formData.confirm_password) {
-      errors.confirm_password = "Passwords do not match";
-    }
-
-    return errors;
-  };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setError("");
-
-  //   const validationErrors = validateForm();
-  //   if (Object.keys(validationErrors).length > 0) {
-  //     setFieldErrors(validationErrors);
-  //     return;
+  //   if (formData.password !== formData.confirm_password) {
+  //     errors.confirm_password = "Passwords do not match";
   //   }
 
-  //   const data = new FormData();
-  //   Object.keys(formData).forEach((key) => {
-  //     data.append(key, formData[key]);
-  //   });
-
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await apiCallBack("POST", "users/register/", data, null);
-  //     if (response.status) {
-  //       setError("");
-  //       toast.success(response?.message);
-  //       dispatch(setUser(response.data));
-  //       setFormData(initialState);
-  //       navigate("/login");
-  //     } else {
-  //       toast.error(response?.message);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     setError(error.response?.data?.message || "Something went wrong");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
+  //   return errors;
   // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setMessage('');
+    setError("");
+    // setMessage("");
     setIsLoading(true);
 
     // Client-side validation
     if (!formData.first_name || !formData.last_name || !formData.email || !formData.phone || !formData.password || !formData.organization_name) {
-        setError('All fields are required!');
-        setIsLoading(false);
-        return;
+      setError("All fields are required!");
+      setIsLoading(false);
+      return;
     }
 
     if (formData.password.length < 8) {
-        setError('Password must be at least 8 characters long');
-        setIsLoading(false);
-        return;
+      setError("Password must be at least 8 characters long");
+      setIsLoading(false);
+      return;
     }
-    
+
     if (formData.password !== formData.confirm_password) {
-        setError('Password and confirm password do not match');
-        setIsLoading(false);
-        return;
+      setError("Password and confirm password do not match");
+      setIsLoading(false);
+      return;
     }
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(formData.email)) {
-        setError('Invalid email format');
-        setIsLoading(false);
-        return;
+      setError("Invalid email format");
+      setIsLoading(false);
+      return;
     }
 
     const phoneRegex = /^\+?1?\d{9,15}$/;
     if (!phoneRegex.test(formData.phone)) {
-        setError('Invalid phone number format');
-        setIsLoading(false);
-        return;
+      setError("Invalid phone number format");
+      setIsLoading(false);
+      return;
     }
 
     const data = new FormData();
-    data.append('first_name', formData.first_name);
-    data.append('last_name', formData.last_name);
-    data.append('email', formData.email);
-    data.append('phone', `${countryCode}${formData.phone}`); // Combine country code with phone
-    data.append('password', formData.password);
-    data.append('organization_name', formData.organization_name);
+    data.append("first_name", formData.first_name);
+    data.append("last_name", formData.last_name);
+    data.append("email", formData.email);
+    data.append("phone", `${countryCode}${formData.phone}`); // Combine country code with phone
+    data.append("password", formData.password);
+    data.append("organization_name", formData.organization_name);
     if (formData.photo) {
-        data.append('photo', formData.photo);
+      data.append("photo", formData.photo);
     }
 
     try {
-        const response = await axios.post('https://crp.mydevfactory.com/api/users/register/', data, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+      const response = await axios.post("https://crp.mydevfactory.com/api/users/register/", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-        if (response.data.status === 1) {
-            setMessage(response.data.message);
-            setIsLoading(false);
-            toast.success(response.data.message)
-          
-            navigate('/login')
-
-        } else {
-          console.log(response)
-            setError(response.data.error);
-            setIsLoading(false);
-            
-        }
-    } catch (err) {
-        console.log(err)
-        toast.error(err.response.data.error)
+      if (response.data.status === 1) {
+        // setMessage(response.data.message);
         setIsLoading(false);
+        toast.success(response.data.message);
+
+        navigate("/login");
+      } else {
+        console.log(response);
+        setError(response.data.error);
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response.data.error);
+      setIsLoading(false);
     }
-};
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black">
@@ -247,93 +204,41 @@ const Signup = () => {
           </div>
 
           {/* Right Section */}
-          <div
-            id="right"
-            className=" flex justify-center bg-[#38383866] p-8 rounded-lg md:w-2/5 w-full shadow-lg px-10"
-          >
+          <div id="right" className=" flex justify-center bg-[#38383866] p-8 rounded-lg md:w-2/5 w-full shadow-lg px-10">
             <div className=" ">
               {/* Fixed Header */}
               <img src={logoImg} alt="Logo" className="mx-auto mb-4 w-28" />
-              <h2 className="text-white text-2xl font-bold text-center mb-2">
-                Create Your Account
-              </h2>
-              <p className="text-gray-400 text-center mb-4">
-                Please enter the credentials below to complete your profile.
-              </p>
+              <h2 className="text-white text-2xl font-bold text-center mb-2">Create Your Account</h2>
+              <p className="text-gray-400 text-center mb-4">Please enter the credentials below to complete your profile.</p>
 
-              {error && (
-                <p className="text-red-500 text-center mb-4">{error}</p>
-              )}
+              {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
               {/* Scrollable Section: Upload Profile to Confirm Password */}
               <div className="max-h-[300px] overflow-y-auto scrollbar-hide">
                 {/* Enhanced Profile Upload Box with Preview */}
                 <div className="border-2 border-dashed border-yellow-500 rounded-lg p-4 text-center mb-4 flex items-center">
-                  <img
-                    src={previewImage || profileImg}
-                    alt="Profile"
-                    className="rounded-full w-16 h-16 object-cover"
-                  />
+                  <img src={previewImage || profileImg} alt="Profile" className="rounded-full w-16 h-16 object-cover" />
                   <label htmlFor="file-upload" className="cursor-pointer">
-                    <img
-                      src={uploadIcon}
-                      alt="Upload Icon"
-                      className="w-8 h-8 cursor-pointer md:ml-4 ml-4"
-                    />
+                    <img src={uploadIcon} alt="Upload Icon" className="w-8 h-8 cursor-pointer md:ml-4 ml-4" />
                   </label>
 
-                  <input
-                    id="file-upload"
-                    type="file"
-                    className="hidden"
-                    accept="image/jpeg, image/png"
-                    name="photo"
-                    onChange={handleFileChange}
-                  />
+                  <input id="file-upload" type="file" className="hidden" accept="image/jpeg, image/png" name="photo" onChange={handleFileChange} />
                   <div className="ml-4 flex-1">
-                    <p className="text-yellow-500 font-medium">
-                      Upload Profile Image
-                    </p>
-                    <p className="text-gray-400 text-xs">
-                      Support: JPEG, PNG (Max 2MB)
-                    </p>
-                    {fieldErrors.photo && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {fieldErrors.photo}
-                      </p>
-                    )}
+                    <p className="text-yellow-500 font-medium">Upload Profile Image</p>
+                    <p className="text-gray-400 text-xs">Support: JPEG, PNG (Max 2MB)</p>
+                    {fieldErrors.photo && <p className="text-red-500 text-xs mt-1">{fieldErrors.photo}</p>}
                   </div>
                 </div>
 
                 {/* Form Fields */}
                 <div className="mb-3">
-                  <input
-                    type="text"
-                    placeholder="First Name"
-                    name="first_name"
-                    onChange={handleChange}
-                    className="w-full p-2 rounded bg-black border border-gray-700 text-white"
-                  />
-                  {fieldErrors.first_name && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {fieldErrors.first_name}
-                    </p>
-                  )}
+                  <input type="text" placeholder="First Name" name="first_name" onChange={handleChange} className="w-full p-2 rounded bg-black border border-gray-700 text-white" />
+                  {fieldErrors.first_name && <p className="text-red-500 text-xs mt-1">{fieldErrors.first_name}</p>}
                 </div>
 
                 <div className="mb-3">
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    name="last_name"
-                    onChange={handleChange}
-                    className="w-full p-2 rounded bg-black border border-gray-700 text-white"
-                  />
-                  {fieldErrors.last_name && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {fieldErrors.last_name}
-                    </p>
-                  )}
+                  <input type="text" placeholder="Last Name" name="last_name" onChange={handleChange} className="w-full p-2 rounded bg-black border border-gray-700 text-white" />
+                  {fieldErrors.last_name && <p className="text-red-500 text-xs mt-1">{fieldErrors.last_name}</p>}
                 </div>
 
                 <div className="mb-3">
@@ -344,36 +249,18 @@ const Signup = () => {
                     onChange={handleChange}
                     className="w-full p-2 rounded bg-black border border-gray-700 text-white"
                   />
-                  {fieldErrors.organization_name && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {fieldErrors.organization_name}
-                    </p>
-                  )}
+                  {fieldErrors.organization_name && <p className="text-red-500 text-xs mt-1">{fieldErrors.organization_name}</p>}
                 </div>
 
                 <div className="mb-3">
-                  <input
-                    type="email"
-                    placeholder="Email ID"
-                    name="email"
-                    onChange={handleChange}
-                    className="w-full p-2 rounded bg-black border border-gray-700 text-white"
-                  />
-                  {fieldErrors.email && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {fieldErrors.email}
-                    </p>
-                  )}
+                  <input type="email" placeholder="Email ID" name="email" onChange={handleChange} className="w-full p-2 rounded bg-black border border-gray-700 text-white" />
+                  {fieldErrors.email && <p className="text-red-500 text-xs mt-1">{fieldErrors.email}</p>}
                 </div>
 
                 {/* Phone Number Field */}
                 <div className="mb-3">
                   <div className="flex">
-                    <select 
-                      className="bg-black border border-gray-700 text-white p-2 rounded-l"
-                      value={countryCode}
-                      onChange={(e) => setCountryCode(e.target.value)}
-                    >
+                    <select className="bg-black border border-gray-700 text-white p-2 rounded-l" value={countryCode} onChange={(e) => setCountryCode(e.target.value)}>
                       <option value="+1">+1</option>
                       <option value="+7">+7</option>
                       <option value="+20">+20</option>
@@ -443,11 +330,7 @@ const Signup = () => {
                       className="w-full p-2 rounded-r bg-black border border-gray-700 text-white"
                     />
                   </div>
-                  {fieldErrors.phone && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {fieldErrors.phone}
-                    </p>
-                  )}
+                  {fieldErrors.phone && <p className="text-red-500 text-xs mt-1">{fieldErrors.phone}</p>}
                 </div>
 
                 {/* Password Fields */}
@@ -459,17 +342,10 @@ const Signup = () => {
                     onChange={handleChange}
                     className="w-full p-2 rounded bg-black border border-gray-700 text-white pr-10"
                   />
-                  <span
-                    className="absolute right-3 top-2 text-gray-400 cursor-pointer"
-                    onClick={togglePasswordVisibility}
-                  >
+                  <span className="absolute right-3 top-2 text-gray-400 cursor-pointer" onClick={togglePasswordVisibility}>
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
-                  {fieldErrors.password && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {fieldErrors.password}
-                    </p>
-                  )}
+                  {fieldErrors.password && <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>}
                 </div>
 
                 <div className="relative mb-3">
@@ -480,34 +356,18 @@ const Signup = () => {
                     onChange={handleChange}
                     className="w-full p-2 rounded bg-black border border-gray-700 text-white pr-10"
                   />
-                  <span
-                    className="absolute right-3 top-2 text-gray-400 cursor-pointer"
-                    onClick={toggleConfirmPasswordVisibility}
-                  >
+                  <span className="absolute right-3 top-2 text-gray-400 cursor-pointer" onClick={toggleConfirmPasswordVisibility}>
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
-                  {fieldErrors.confirm_password && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {fieldErrors.confirm_password}
-                    </p>
-                  )}
+                  {fieldErrors.confirm_password && <p className="text-red-500 text-xs mt-1">{fieldErrors.confirm_password}</p>}
                 </div>
 
-                <input
-                  id="file-upload"
-                  type="hidden"
-                  name="username"
-                  onChange={handleUserChange}
-                />
+                <input id="file-upload" type="hidden" name="username" onChange={handleUserChange} />
               </div>
 
               {/* Fixed Footer: Submit Button & Login Link */}
               <div className="mt-4">
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-[#BBA14F] text-black p-2 rounded font-bold"
-                >
+                <button type="submit" disabled={isLoading} className="w-full bg-[#BBA14F] text-black p-2 rounded font-bold">
                   {isLoading ? "Loading..." : "Submit"}
                 </button>
 
@@ -522,7 +382,6 @@ const Signup = () => {
           </div>
         </div>
       </form>
-     
     </div>
   );
 };

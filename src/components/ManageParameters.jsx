@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { FaPlus } from "react-icons/fa";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -12,14 +11,13 @@ import { useNavigate } from "react-router-dom";
 
 const ManageParameters = () => {
   const navigate = useNavigate();
-  const users = useSelector((state) => state.user);
+  // const users = useSelector((state) => state.user);
   let tokens = useSelector((state) => state.token) || localStorage.getItem("token");
   if (!tokens) {
     navigate("/");
   }
   tokens = tokens.replace(/"/g, "");
   //console.log(testing ${tokens});
-  console.log(users);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -207,7 +205,6 @@ const ManageParameters = () => {
     }
   };
 
-  console.log("selected parameters", selectedParameter);
   return (
     <Layout title="Manage Parameters ">
       <div className="px-8 pb-7 bg-[#292929] rounded-lg">
@@ -286,14 +283,14 @@ const ManageParameters = () => {
                             <div className="relative group">
                               <img src={editicon} alt="Edit" className="w-6 h-6 cursor-not-allowed" />
                               <div className="absolute hidden group-hover:block bg-black text-white text-xs rounded p-2 w-40 right-10 -top-2 z-10 text-center">
-                                Predefined data can't be edited
+                                Predefined data can&apos;t be edited
                               </div>
                             </div>
                             <div className="h-6 w-[1px] bg-gray-600"></div>
                             <div className="relative group">
                               <img src={deleteicon} alt="Delete" className="w-6 h-6 cursor-not-allowed" />
                               <div className="absolute hidden group-hover:block bg-black text-white text-xs rounded p-2 w-40 right-7 -top-2 z-10 text-center">
-                                Predefined data can't be deleted
+                                Predefined data can&apos;t be deleted
                               </div>
                             </div>
                           </>
@@ -389,7 +386,7 @@ const ManageParameters = () => {
               </button>
 
               <h3 className="text-center text-xl font-bold mb-6 text-black">Delete Parameter</h3>
-              <p className="text-gray-600 mb-4">Are you sure you want to delete "{selectedParameter.name}"?</p>
+              <p className="text-gray-600 mb-4">Are you sure you want to delete &quot;{selectedParameter.name}&quot;?</p>
               <div className="flex justify-end space-x-4">
                 <button
                   disabled={deleteLoading}

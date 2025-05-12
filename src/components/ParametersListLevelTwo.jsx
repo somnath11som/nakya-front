@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Layout from "./Layout";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 
 import backIcon from "../assets/Images/manageInstru/backIcon.png";
 import editicon from "../assets/Images/manageDeptImg/editicon.png";
@@ -18,7 +18,7 @@ const ParametersListLevelTwo = () => {
 
   // Use URL parameter ID as primary source, fallback to location state if needed
   const parentId = paramIdFromUrl || location.state?.parameter?.id;
-  const parameterName = location.state?.parameter?.name || "Parameter";
+  // const parameterName = location.state?.parameter?.name || "Parameter";
   // Get authentication token from Redux or localStorage
   let tokens = useSelector((state) => state.token) || localStorage.getItem("token");
   if (!tokens) {
@@ -365,8 +365,8 @@ const ParametersListLevelTwo = () => {
     <Layout
       title={
         <div className="flex items-center gap-2">
-          <div className="border border-[#BBA14F] rounded-full p-3">
-            <img src={backIcon} alt="Back" className="h-5 w-5 cursor-pointer" onClick={() => navigate(-1)} />
+          <div className="border border-[#BBA14F] rounded-full p-3 cursor-pointer" onClick={() => navigate(-1)}>
+            <img src={backIcon} alt="Back" className="h-3 w-3" />
           </div>
           <span>{parentParameter?.name || `Parameter ${parentId}`}</span>
         </div>
@@ -493,7 +493,7 @@ const ParametersListLevelTwo = () => {
 
               <h3 className="text-center text-xl font-bold mb-6 text-black">Delete {parentParameter?.name || `Parameter ${parentId}`}</h3>
               <p className="text-gray-600 mb-6 text-center">
-                Are you sure you want to delete {parentParameter?.name || `Parameter ${parentId}`} "{selectedParameter?.name}"?
+                Are you sure you want to delete {parentParameter?.name || `Parameter ${parentId}`} &quot;{selectedParameter?.name}&quot;?
               </p>
               <form onSubmit={handleDelete}>
                 <div className="flex justify-end space-x-4">
@@ -510,7 +510,7 @@ const ParametersListLevelTwo = () => {
           </div>
         )}
 
-        <div className="border border-[#202020]  rounded-lg overflow-x-auto max-h-[calc(100vh-300px)] overflow-auto  scrollbar-hide">
+        <div className="border border-[#202020]  rounded-lg overflow-x-auto scrollbar-hide">
           <table className="w-full bg-[#292929]   rounded-lg">
             <thead>
               <tr className="text-left text-[#818181] border-b border-gray-700 sticky top-0 bg-black z-20 ">
@@ -564,14 +564,14 @@ const ParametersListLevelTwo = () => {
                             <div className="relative group ">
                               <img src={editicon} alt="Edit" className="w-6 h-6  cursor-not-allowed" />
                               <div className="absolute hidden group-hover:block bg-black text-white text-xs rounded p-2 w-40 right-10 -top-2 z-10 text-center">
-                                Predefined data can't be edited
+                                Predefined data can&apos;t be edited
                               </div>
                             </div>
                             <div className="h-6 w-[1px] bg-gray-600"></div>
                             <div className="relative group">
                               <img src={deleteicon} alt="Delete" className="w-6 h-6  cursor-not-allowed" />
                               <div className="absolute hidden group-hover:block bg-black text-white text-xs rounded p-2 w-40 right-7 -top-2 z-10 text-center">
-                                Predefined data can't be deleted
+                                Predefined data can&apos;t be deleted
                               </div>
                             </div>
                           </>
